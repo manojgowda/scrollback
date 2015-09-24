@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 "use strict";
 
 module.exports = function(core, config, store) {
@@ -6,28 +8,33 @@ module.exports = function(core, config, store) {
 
 	ConnectionStatus = React.createClass({
 		render: function() {
-			return <div className="connection-status" data-state="offline connecting">{this.state.text}</div>;
+			const { connection } = this.state;
+
+			let text;
+
+			if (connection === "offline") {
+				text = "You're offline!";
+			} else if (connection === "connecting") {
+				text = "Connecting...";
+			} else {
+				text = "";
+			}
+
+			return (
+			        <div className="connection-status" data-state="offline connecting">
+			        	<div>{text}</div>
+			        	{connection === "offline" ? <button onClick={() => window.location.reload(true)}>Retry</button> : null}
+			        </div>
+			);
 		},
 
 		getInitialState: function() {
-			return { text: "" };
+			return { connection: null };
 		},
 
 		onStateChange: function(changes) {
-			var connection, text;
-
 			if (changes.app && "connectionStatus" in changes.app) {
-				connection = store.get("app", "connectionStatus");
-
-				if (connection === "offline") {
-					text = "You're offline!";
-				} else if (connection === "connecting") {
-					text = "Connecting...";
-				} else {
-					text = "";
-				}
-
-				this.setState({ text: text });
+				this.setState({ connection: store.get("app", "connectionStatus") });
 			}
 		},
 
@@ -42,3 +49,4 @@ module.exports = function(core, config, store) {
 
 	return ConnectionStatus;
 };
+
