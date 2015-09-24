@@ -286,7 +286,7 @@ function onEdit(edit) {
 	if (text) {
 		if (text.id === text.thread) {
 			currentThread = store.get("indexes", "threadsById", text.id);
-
+			console.log(currentThread);
 			text.color = currentThread ? currentThread.color : text.color;
 			text.concerns = currentThread ? currentThread.concerns : text.concerns;
 
@@ -337,6 +337,7 @@ function onJoinPart(join) {
 	}
 	entities[roomObj.id] = entityOps.relatedEntityToEntity(roomObj);
 	entities[userObj.id] = entityOps.relatedEntityToEntity(userObj);
+	delete entities[userObj.id].status;
 	entities[roomObj.id + "_" + userObj.id] = relation;
 
 	core.emit("setstate", {
